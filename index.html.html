@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axovera Pro — Structural Risk Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+[data-theme="dark"]{
+  --bg:#04050a;
+  --surface:#080c14;
+  --card:#0d1220;
+  --card2:#101828;
+  --border:#1a2540;
+  --border2:#1f2e4a;
+  --text:#e8edf8;
+  --text2:#c5cfe8;
+  --muted:#6b7fa0;
+  --muted2:#8a9bbf;
+  --green:#00e5a0;
+  --green-bg:rgba(0,229,160,0.08);
+  --yellow:#ffb938;
+  --yellow-bg:rgba(255,185,56,0.08);
+  --red:#ff4560;
+  --red-bg:rgba(255,69,96,0.08);
+  --blue:#5b9ef5;
+  --blue-bg:rgba(91,158,245,0.08);
+  --accent:#5b6ef5;
+  --accent2:#7c3aed;
+  --accent-bg:rgba(91,110,245,0.1);
+  --sidebar-bg:#060910;
+  --input-bg:#060910;
+  --shadow:rgba(0,0,0,0.5);
+  --scrollbar:#1a2540;
+}
+
+[data-theme="light"]{
+  --bg:#f0f2f8;
+  --surface:#ffffff;
+  --card:#ffffff;
+  --card2:#f8f9fc;
+  --border:#d4daea;
+  --border2:#c2ccdf;
+  --text:#0d1220;
+  --text2:#2a3550;
+  --muted:#7a8aaa;
+  --muted2:#4a5878;
+  --green:#00a572;
+  --green-bg:rgba(0,165,114,0.08);
+  --yellow:#c98000;
+  --yellow-bg:rgba(201,128,0,0.08);
+  --red:#d42040;
+  --red-bg:rgba(212,32,64,0.08);
+  --blue:#2563c0;
+  --blue-bg:rgba(37,99,192,0.08);
+  --accent:#4a5ce0;
+  --accent2:#6325cc;
+  --accent-bg:rgba(74,92,224,0.08);
+  --sidebar-bg:#f8f9fc;
+  --input-bg:#f0f2f8;
+  --shadow:rgba(0,0,0,0.08);
+  --scrollbar:#d4daea;
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  font-size:14px;
+  overflow:hidden;
+  transition:background .3s,color .3s;
+}
+
+/* SPLASH */
+.splash{
+  position:fixed;inset:0;
+  background:#04050a;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;
+  animation:splashFade 0.5s ease 2.3s forwards;
+}
+.splash-logo{
+  font-family:'Syne',sans-serif;
+  font-size:48px;font-weight:800;
+  letter-spacing:8px;color:#fff;
+  animation:splashIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  opacity:0;
+}
+.splash-pro{
+  display:inline-block;
+  font-size:11px;font-weight:700;letter-spacing:2px;
+  background:rgba(91,110,245,0.2);color:#a5b4fc;
+  border:1px solid rgba(91,110,245,0.4);
+  padding:3px 10px;border-radius:4px;
+  margin-left:12px;vertical-align:middle;
+  font-family:'DM Sans',sans-serif;
+}
+.splash-line{
+  width:0px;height:2px;
+  background:#5b6ef5;margin-top:16px;
+  animation:splashLine 0.6s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+}
+.splash-tagline{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;
+  letter-spacing:3px;color:#4a5568;
+  text-transform:uppercase;margin-top:14px;
+  opacity:0;
+  animation:splashIn 0.5s ease 0.9s forwards;
+}
+@keyframes splashIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splashLine{from{width:0px}to{width:140px}}
+@keyframes splashFade{from{opacity:1;pointer-events:all}to{opacity:0;pointer-events:none}}
+
+/* APP SHELL */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;flex-shrink:0;
+  background:var(--sidebar-bg);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+.sidebar-header{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.brand{
+  font-family:'Syne',sans-serif;
+  font-size:17px;font-weight:800;
+  letter-spacing:3px;color:var(--text);
+}
+
+.brand-pro{
+  display:inline-block;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  background:var(--accent-bg);color:var(--accent);
+  border:1px solid rgba(91,110,245,0.3);
+  padding:2px 7px;border-radius:4px;
+  margin-left:8px;vertical-align:middle;
+  font-family:'DM Sans',sans-serif;
+}
+
+.sidebar-user{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;
+  padding:8px 10px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+
+.user-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+.user-info{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.2}
+.user-plan{font-size:10px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+
+.sidebar-nav{
+  flex:1;overflow-y:auto;
+  padding:12px 0;
+}
+
+.nav-section-label{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;
+  padding:8px 20px 4px;
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;cursor:pointer;
+  color:var(--muted2);font-size:13px;font-weight:500;
+  border-left:2px solid transparent;
+  transition:all .15s;position:relative;
+}
+
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent)}
+
+.nav-icon{
+  width:15px;height:15px;flex-shrink:0;opacity:.8;
+}
+
+.nav-badge{
+  margin-left:auto;font-size:9px;font-weight:700;
+  background:var(--accent-bg);color:var(--accent);
+  padding:2px 6px;border-radius:10px;letter-spacing:.3px;
+}
+
+.sidebar-footer{
+  padding:16px 20px;
+  border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:8px;
+}
+
+.sidebar-share-label{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;
+  margin-bottom:2px;
+}
+
+.share-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--muted2);font-size:12px;font-weight:500;
+  padding:7px 10px;border-radius:7px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+  width:100%;
+}
+.share-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.theme-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--muted2);font-size:12px;font-weight:500;
+  padding:7px 10px;border-radius:7px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+  width:100%;
+}
+.theme-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* MAIN AREA */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOP BAR */
+.topbar{
+  height:56px;flex-shrink:0;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+}
+
+.topbar-title{
+  font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:700;color:var(--text);
+}
+
+.topbar-right{display:flex;align-items:center;gap:10px}
+
+.run-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;
+  padding:8px 20px;border-radius:8px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Syne',sans-serif;letter-spacing:.3px;
+  transition:all .2s;
+}
+.run-btn:hover{opacity:.9;transform:translateY(-1px)}
+.run-btn:active{transform:translateY(0)}
+
+/* INPUT STRIP */
+.input-strip{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;
+  display:flex;align-items:end;gap:14px;
+  flex-shrink:0;
+}
+
+.input-group{display:flex;flex-direction:column;gap:5px;flex:1}
+
+.input-group label{
+  font-size:10px;font-weight:700;letter-spacing:.8px;
+  color:var(--muted2);text-transform:uppercase;
+}
+
+.input-group input{
+  background:var(--input-bg);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:9px 12px;border-radius:8px;
+  font-size:14px;font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;width:100%;
+}
+.input-group input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,110,245,0.1)}
+.input-group input::placeholder{color:var(--muted)}
+
+/* WORKSPACE */
+.workspace{
+  flex:1;overflow-y:auto;
+  padding:24px;
+}
+
+/* SCROLLBAR */
+.workspace::-webkit-scrollbar{width:5px}
+.workspace::-webkit-scrollbar-track{background:transparent}
+.workspace::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:3px}
+.sidebar-nav::-webkit-scrollbar{width:4px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:2px}
+
+/* ENGINE */
+.engine{display:none}
+.engine.active{display:block}
+
+.engine-header{margin-bottom:20px}
+.engine-title{
+  font-family:'Syne',sans-serif;
+  font-size:20px;font-weight:800;
+  color:var(--text);margin-bottom:6px;
+}
+.engine-desc{font-size:13px;color:var(--muted2);line-height:1.6}
+
+/* CARDS */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+  transition:border-color .2s;
+}
+
+.card-title{
+  font-size:11px;font-weight:700;letter-spacing:1px;
+  color:var(--muted2);text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+/* STAT BOXES */
+.stats-row{display:grid;gap:12px;margin-bottom:16px}
+.stats-3{grid-template-columns:repeat(3,1fr)}
+.stats-4{grid-template-columns:repeat(4,1fr)}
+
+.stat-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted2);text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.stat-value.green{color:var(--green)}
+.stat-value.yellow{color:var(--yellow)}
+.stat-value.red{color:var(--red)}
+.stat-value.blue{color:var(--blue)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+
+/* PROGRESS BAR */
+.bar-wrap{margin-bottom:6px}
+.bar-label-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-bottom:6px;font-weight:500}
+.bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;width:0%;border-radius:4px;transition:width .8s cubic-bezier(0.22,1,0.36,1)}
+
+/* BADGE */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,229,160,0.25)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,185,56,0.25)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,69,96,0.25)}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,158,245,0.25)}
+.badge-dot{width:6px;height:6px;border-radius:50%}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dash-wide{grid-column:1/-1}
+
+.fragility-ring-wrap{
+  display:flex;align-items:center;gap:28px;
+}
+.ring-svg{transform:rotate(-90deg);flex-shrink:0}
+.ring-bg{fill:none;stroke:var(--border2);stroke-width:10}
+.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1),stroke .5s;stroke-dasharray:440;stroke-dashoffset:440}
+.ring-number{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;line-height:1}
+.ring-label{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted2);text-transform:uppercase;margin-top:4px}
+.ring-meta{flex:1}
+.ring-verdict{margin-bottom:10px}
+.ring-insight{font-size:14px;color:var(--muted2);line-height:1.7}
+.ring-insight strong{color:var(--text);font-weight:600}
+
+/* MATRIX */
+.matrix-wrap{overflow-x:auto}
+table.matrix{width:100%;border-collapse:separate;border-spacing:6px}
+table.matrix th{font-size:11px;font-weight:600;color:var(--muted2);text-align:center;padding:8px;letter-spacing:.5px}
+table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-align:right;padding-right:10px;white-space:nowrap}
+.mcell{
+  padding:14px 10px;border-radius:8px;
+  text-align:center;font-size:11px;font-weight:700;letter-spacing:.5px;
+}
+.mcell-safe{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,229,160,0.2)}
+.mcell-volatile{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,185,56,0.2)}
+.mcell-loss{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,69,96,0.2)}
+.mcell-val{font-size:13px;font-weight:800;display:block;margin-bottom:2px}
+.mcell-lbl{font-size:9px;opacity:.8;letter-spacing:.5px}
+
+/* SENSITIVITY */
+.sens-list{display:flex;flex-direction:column;gap:14px}
+.sens-row{display:grid;grid-template-columns:110px 1fr 60px 120px;align-items:center;gap:12px}
+.sens-name{font-size:13px;font-weight:600;color:var(--text2)}
+.sens-pct{font-size:13px;font-weight:700;text-align:right}
+.sens-insight{font-size:11px;color:var(--muted2);font-style:italic}
+
+/* GRAPHS */
+.graphs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:18px;cursor:pointer;
+  transition:border-color .2s,transform .15s;
+}
+.chart-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.chart-card-title{
+  font-size:11px;font-weight:700;letter-spacing:.8px;
+  color:var(--muted2);text-transform:uppercase;margin-bottom:12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.chart-expand-hint{font-size:10px;color:var(--muted);font-style:normal;letter-spacing:0;text-transform:none}
+.chart-wrap{height:180px;position:relative}
+
+/* ANALYSIS */
+.diagnosis-box{
+  padding:18px 20px;border-radius:10px;
+  border-left:3px solid;margin-bottom:16px;
+}
+.diagnosis-stable{background:var(--green-bg);border-color:var(--green)}
+.diagnosis-fragile{background:var(--yellow-bg);border-color:var(--yellow)}
+.diagnosis-collapsing{background:var(--red-bg);border-color:var(--red)}
+.diagnosis-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:4px}
+.diagnosis-status{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+
+.action-list{display:flex;flex-direction:column;gap:8px}
+.action-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;font-size:13px;color:var(--text2);line-height:1.5;
+}
+.action-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;margin-top:5px;
+}
+.action-priority{
+  font-size:9px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;margin-top:2px;
+}
+
+/* RISK SURFACE */
+.surface-container{position:relative;padding-left:36px}
+.surface-y-axis{
+  position:absolute;left:0;top:50%;
+  transform:translateY(-50%) rotate(-90deg);
+  font-size:11px;color:var(--muted2);white-space:nowrap;font-weight:500;
+}
+.surface-x-axis{
+  text-align:center;font-size:11px;
+  color:var(--muted2);margin-top:8px;font-weight:500;
+}
+.surface-legend{display:flex;gap:16px;margin-top:12px;padding-left:36px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted2);font-weight:500}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* SCALE CEILING */
+.scale-meter{
+  position:relative;height:120px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;margin-bottom:16px;
+  display:flex;align-items:flex-end;
+}
+.scale-fill{
+  height:0%;width:100%;
+  transition:height .8s cubic-bezier(0.22,1,0.36,1);
+  border-radius:0;
+}
+.scale-meter-label{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;
+}
+.scale-meter-num{font-size:28px;font-weight:800;color:var(--text)}
+.scale-meter-sub{font-size:11px;color:var(--muted2);font-weight:600;letter-spacing:.5px;margin-top:2px}
+
+/* POPUP */
+.popup-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:1000;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.popup-overlay.open{display:flex}
+.popup-box{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;width:900px;max-width:95vw;padding:24px;
+  box-shadow:0 20px 60px var(--shadow);
+}
+.popup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.popup-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.popup-close{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--muted2);width:32px;height:32px;border-radius:8px;
+  cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.popup-close:hover{border-color:var(--red);color:var(--red)}
+.popup-chart-wrap{height:380px;position:relative}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);
+  z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;width:420px;max-width:100%;padding:32px;text-align:center;
+}
+.modal-icon{font-size:32px;margin-bottom:16px}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:10px}
+.modal-body{font-size:14px;color:var(--muted2);line-height:1.8;margin-bottom:24px}
+.modal-body strong{color:var(--text);font-weight:600}
+.modal-btn{
+  background:var(--accent);border:none;color:#fff;
+  padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'Syne',sans-serif;
+}
+
+/* EMPTY STATE */
+.empty{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 20px;text-align:center;
+}
+.empty-icon{font-size:40px;margin-bottom:16px;opacity:.4}
+.empty-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--muted2);line-height:1.6;max-width:300px}
+
+/* WELCOME / DASHBOARD CARDS */
+.welcome-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.welcome-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:20px;cursor:pointer;
+  transition:all .2s;
+}
+.welcome-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.welcome-card-icon{font-size:24px;margin-bottom:12px}
+.welcome-card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.welcome-card-desc{font-size:12px;color:var(--muted2);line-height:1.6}
+.welcome-card-arrow{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;color:var(--accent);margin-top:10px;
+}
+
+/* GRID BACKGROUND */
+.main::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(91,110,245,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,110,245,0.02) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+}
+.workspace{position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splash-logo">AXOVERA <span class="splash-pro">PRO</span></div>
+  <div class="splash-line"></div>
+  <div class="splash-tagline">Structural Risk Engine</div>
+</div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="brand">AXOVERA <span class="brand-pro">PRO</span></div>
+    <div class="sidebar-user">
+      <div class="user-avatar">AX</div>
+      <div class="user-info">
+        <div class="user-name">Pro Account</div>
+        <div class="user-plan">Full Access</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Engines</div>
+
+    <div class="nav-item active" data-engine="dashboard">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="3" rx="1" fill="currentColor" opacity=".6"/><rect x="9" y="5" width="6" height="2" rx="1" fill="currentColor" opacity=".3"/><rect x="1" y="9" width="14" height="6" rx="1.5" fill="currentColor" opacity=".4"/></svg>
+      Dashboard
+    </div>
+
+    <div class="nav-item" data-engine="matrix">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="4" height="4" rx="1" fill="currentColor"/><rect x="6" y="1" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="1" width="4" height="4" rx="1" fill="currentColor" opacity=".3"/><rect x="1" y="6" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="6" y="6" width="4" height="4" rx="1" fill="currentColor"/><rect x="11" y="6" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="11" width="4" height="4" rx="1" fill="currentColor" opacity=".3"/><rect x="6" y="11" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="11" width="4" height="4" rx="1" fill="currentColor"/></svg>
+      Scenario Matrix
+    </div>
+
+    <div class="nav-item" data-engine="collapse">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 14L6 6L9 10L11 7L14 14H2Z" fill="currentColor" opacity=".3"/><path d="M2 14L6 6L9 10L11 7L14 14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
+      Collapse Probability
+    </div>
+
+    <div class="nav-item" data-engine="surface">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor" opacity=".2"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" opacity=".65"/></svg>
+      Risk Surface
+    </div>
+
+    <div class="nav-item" data-engine="scale">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12L5 8L9 10L14 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 3H14V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Scale Ceiling
+    </div>
+
+    <div class="nav-item" data-engine="sensitivity">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="9" height="2" rx="1" fill="currentColor"/><rect x="1" y="7.5" width="13" height="2" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="11" width="6" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>
+      Sensitivity Map
+    </div>
+
+    <div class="nav-item" data-engine="graphs">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor" opacity=".4"/><rect x="5" y="6" width="3" height="9" rx="1" fill="currentColor" opacity=".6"/><rect x="9" y="3" width="3" height="12" rx="1" fill="currentColor" opacity=".8"/><rect x="13" y="1" width="3" height="14" rx="1" fill="currentColor"/></svg>
+      Graphs
+    </div>
+
+    <div class="nav-item" data-engine="analysis">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5V8.5L10 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Structural Analysis
+      <span class="nav-badge">AI</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-share-label">Share</div>
+    <button class="share-btn" onclick="shareTwitter()">↗ Twitter / X</button>
+    <button class="share-btn" onclick="shareTelegram()">↗ Telegram</button>
+    <button class="theme-btn" id="themeToggle">☀️ &nbsp;Toggle Light Mode</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="run-btn" id="runBtn">Run Engine →</button>
+    </div>
+  </div>
+
+  <!-- INPUT STRIP -->
+  <div class="input-strip">
+    <div class="input-group">
+      <label>AOV — Avg Order Value</label>
+      <input type="number" id="aov" placeholder="e.g. 120">
+    </div>
+    <div class="input-group">
+      <label>CVR — Conversion Rate %</label>
+      <input type="number" id="cvr" placeholder="e.g. 3.5">
+    </div>
+    <div class="input-group">
+      <label>COGS — Cost of Goods</label>
+      <input type="number" id="cogs" placeholder="e.g. 40">
+    </div>
+    <div class="input-group">
+      <label>CPC — Cost Per Click</label>
+      <input type="number" id="cpc" placeholder="e.g. 1.80">
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+
+    <!-- DASHBOARD -->
+    <div id="engine-dashboard" class="engine active">
+      <div class="engine-header">
+        <div class="engine-title">Structural Dashboard</div>
+        <div class="engine-desc">Complete overview of your ad system's structural health. Enter your numbers and click Run Engine.</div>
+      </div>
+
+      <div id="dashEmpty" class="empty">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">Enter your numbers above</div>
+        <div class="empty-desc">Fill in AOV, CVR, COGS and CPC — then click "Run Engine" to see your full structural analysis.</div>
+      </div>
+
+      <div id="dashResults" style="display:none">
+        <!-- Fragility Score -->
+        <div class="card dash-wide" style="margin-bottom:16px">
+          <div class="card-title">Structural Fragility Score</div>
+          <div class="fragility-ring-wrap">
+            <div style="position:relative;flex-shrink:0">
+              <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                <circle class="ring-bg" cx="70" cy="70" r="56"/>
+                <circle class="ring-fill" id="dashRing" cx="70" cy="70" r="56"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <div class="ring-number" id="dashScore">—</div>
+                <div class="ring-label">/ 100</div>
+              </div>
+            </div>
+            <div class="ring-meta">
+              <div class="ring-verdict" id="dashVerdict"></div>
+              <div class="ring-insight" id="dashInsight"></div>
+              <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap" id="dashTags"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="stats-row stats-4" style="margin-bottom:16px">
+          <div class="stat-box">
+            <div class="stat-label">Break-Even CPC</div>
+            <div class="stat-value" id="dashBe">—</div>
+            <div class="stat-sub">Max sustainable CPC</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Profit / Click</div>
+            <div class="stat-value" id="dashProfit">—</div>
+            <div class="stat-sub">Current EV minus CPC</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">CPC Headroom</div>
+            <div class="stat-value" id="dashHeadroom">—</div>
+            <div class="stat-sub">Before break-even</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Collapse Risk</div>
+            <div class="stat-value" id="dashCollapse">—</div>
+            <div class="stat-sub">Of 9 stress scenarios</div>
+          </div>
+        </div>
+
+        <!-- Quick Engines -->
+        <div class="welcome-grid">
+          <div class="welcome-card" onclick="activateEngine('matrix')">
+            <div class="welcome-card-icon">⚔️</div>
+            <div class="welcome-card-title">Scenario Matrix</div>
+            <div class="welcome-card-desc">See how your system behaves across 9 stress scenarios with exact profit figures</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+          <div class="welcome-card" onclick="activateEngine('collapse')">
+            <div class="welcome-card-icon">📉</div>
+            <div class="welcome-card-title">Collapse Probability</div>
+            <div class="welcome-card-desc">Quantify exactly how fragile your traffic structure is with a visual collapse curve</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+          <div class="welcome-card" onclick="activateEngine('surface')">
+            <div class="welcome-card-icon">🗺️</div>
+            <div class="welcome-card-title">Risk Surface</div>
+            <div class="welcome-card-desc">Heatmap of structural behavior across a wide range of CPC and CVR environments</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+          <div class="welcome-card" onclick="activateEngine('scale')">
+            <div class="welcome-card-icon">🚀</div>
+            <div class="welcome-card-title">Scale Ceiling</div>
+            <div class="welcome-card-desc">Find exactly how much you can scale before the structure breaks</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+          <div class="welcome-card" onclick="activateEngine('sensitivity')">
+            <div class="welcome-card-icon">🎯</div>
+            <div class="welcome-card-title">Sensitivity Map</div>
+            <div class="welcome-card-desc">Find which variable breaks your system fastest and by how much</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+          <div class="welcome-card" onclick="activateEngine('analysis')">
+            <div class="welcome-card-icon">🔬</div>
+            <div class="welcome-card-title">Structural Analysis</div>
+            <div class="welcome-card-desc">Full AI-powered diagnosis with prioritised action plan to fix what's broken</div>
+            <div class="welcome-card-arrow">Open Engine →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO MATRIX -->
+    <div id="engine-matrix" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Scenario Matrix</div>
+        <div class="engine-desc">9 stress scenarios — profit per click across 3 CPC increases × 3 CVR drops. Numbers show actual profit, not just labels.</div>
+      </div>
+      <div class="card">
+        <div class="matrix-wrap">
+          <table class="matrix" id="matrixTable">
+            <thead>
+              <tr>
+                <th></th>
+                <th>CPC +10%</th>
+                <th>CPC +20%</th>
+                <th>CPC +30%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-lbl">CVR −10%</td>
+                <td><div class="mcell" id="c00">—</div></td>
+                <td><div class="mcell" id="c01">—</div></td>
+                <td><div class="mcell" id="c02">—</div></td>
+              </tr>
+              <tr>
+                <td class="row-lbl">CVR −20%</td>
+                <td><div class="mcell" id="c10">—</div></td>
+                <td><div class="mcell" id="c11">—</div></td>
+                <td><div class="mcell" id="c12">—</div></td>
+              </tr>
+              <tr>
+                <td class="row-lbl">CVR −30%</td>
+                <td><div class="mcell" id="c20">—</div></td>
+                <td><div class="mcell" id="c21">—</div></td>
+                <td><div class="mcell" id="c22">—</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <span class="badge badge-green"><span class="badge-dot" style="background:var(--green)"></span>Safe — Profitable</span>
+        <span class="badge badge-yellow"><span class="badge-dot" style="background:var(--yellow)"></span>Volatile — Thin margin</span>
+        <span class="badge badge-red"><span class="badge-dot" style="background:var(--red)"></span>Loss — System collapses</span>
+      </div>
+    </div>
+
+    <!-- COLLAPSE PROBABILITY -->
+    <div id="engine-collapse" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Collapse Probability</div>
+        <div class="engine-desc">What percentage of realistic market scenarios cause your system to collapse?</div>
+      </div>
+      <div class="stats-row stats-3" style="margin-bottom:16px">
+        <div class="stat-box">
+          <div class="stat-label">Collapsing Scenarios</div>
+          <div class="stat-value red" id="collapseCount">—</div>
+          <div class="stat-sub">Out of 9 total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Collapse Probability</div>
+          <div class="stat-value" id="collapsePct">—</div>
+          <div class="stat-sub" id="collapseRiskLabel">—</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Break-Even CPC</div>
+          <div class="stat-value green" id="collapseBeV">—</div>
+          <div class="stat-sub">Max safe CPC</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Collapse Risk Meter</div>
+        <div class="bar-wrap">
+          <div class="bar-label-row"><span>0% — No Risk</span><span id="collapseBarLabel">—</span><span>100% — Full Collapse</span></div>
+          <div class="bar-track"><div class="bar-fill" id="collapseFill"></div></div>
+        </div>
+        <div style="margin-top:12px" id="collapseBadge"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Profit Collapse Curve</div>
+        <div style="height:260px;position:relative"><canvas id="collapseChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- RISK SURFACE -->
+    <div id="engine-surface" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Risk Surface Heatmap</div>
+        <div class="engine-desc">Structural behavior across a wide range of CPC increases (x-axis) and CVR drops (y-axis). Green = profitable, amber = volatile, red = collapse.</div>
+      </div>
+      <div class="card">
+        <div class="surface-container">
+          <div class="surface-y-axis">CVR Drop →</div>
+          <canvas id="riskCanvas" width="800" height="400" style="width:100%;border-radius:8px;display:block"></canvas>
+          <div class="surface-x-axis">CPC Increase →</div>
+        </div>
+        <div class="surface-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#00a572"></div>Profitable</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#c98000"></div>Volatile (thin margin)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Collapse (loss)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCALE CEILING -->
+    <div id="engine-scale" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Scale Ceiling Engine</div>
+        <div class="engine-desc">The maximum CPC your structure can absorb before the system collapses. This is your hard scaling limit.</div>
+      </div>
+      <div class="stats-row stats-3" style="margin-bottom:16px">
+        <div class="stat-box">
+          <div class="stat-label">Current CPC</div>
+          <div class="stat-value" id="scaleCurrent">—</div>
+          <div class="stat-sub">What you're paying now</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Max Sustainable CPC</div>
+          <div class="stat-value green" id="scaleMax">—</div>
+          <div class="stat-sub">Your structural ceiling</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Scaling Headroom</div>
+          <div class="stat-value" id="scaleHeadroom">—</div>
+          <div class="stat-sub">Room to scale safely</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">CPC Headroom Meter</div>
+        <div class="bar-wrap">
+          <div class="bar-label-row"><span>Current CPC</span><span id="scaleUsedLabel">—</span><span>Ceiling</span></div>
+          <div class="bar-track" style="height:12px"><div class="bar-fill" id="scaleFill" style="height:12px"></div></div>
+        </div>
+        <div style="margin-top:16px;font-size:13px;color:var(--muted2);line-height:1.7" id="scaleInsight"></div>
+      </div>
+    </div>
+
+    <!-- SENSITIVITY MAP -->
+    <div id="engine-sensitivity" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Sensitivity Map</div>
+        <div class="engine-desc">Which variable causes the most structural damage when it shifts by 10%? Ranked by impact on profit per click.</div>
+      </div>
+      <div class="card">
+        <div class="sens-list" id="sensList"></div>
+      </div>
+    </div>
+
+    <!-- GRAPHS -->
+    <div id="engine-graphs" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Graphs</div>
+        <div class="engine-desc">4 structural charts. Click any to expand into full view.</div>
+      </div>
+      <div class="graphs-grid">
+        <div class="chart-card" onclick="openPopup('profit')">
+          <div class="chart-card-title">Profit Collapse Curve <span class="chart-expand-hint">Click to expand ↗</span></div>
+          <div class="chart-wrap"><canvas id="gProfit"></canvas></div>
+        </div>
+        <div class="chart-card" onclick="openPopup('breakeven')">
+          <div class="chart-card-title">Break-Even Boundary <span class="chart-expand-hint">Click to expand ↗</span></div>
+          <div class="chart-wrap"><canvas id="gBreakeven"></canvas></div>
+        </div>
+        <div class="chart-card" onclick="openPopup('fragility')">
+          <div class="chart-card-title">Fragility Curve <span class="chart-expand-hint">Click to expand ↗</span></div>
+          <div class="chart-wrap"><canvas id="gFragility"></canvas></div>
+        </div>
+        <div class="chart-card" onclick="openPopup('pie')">
+          <div class="chart-card-title">Cost Breakdown <span class="chart-expand-hint">Click to expand ↗</span></div>
+          <div class="chart-wrap"><canvas id="gPie"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRUCTURAL ANALYSIS -->
+    <div id="engine-analysis" class="engine">
+      <div class="engine-header">
+        <div class="engine-title">Structural Analysis</div>
+        <div class="engine-desc">Full diagnosis of your traffic structure with prioritised action plan.</div>
+      </div>
+      <div id="analysisDiag" style="display:none" class="diagnosis-box diagnosis-fragile"></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Structural Fragility Score</div>
+        <div class="bar-wrap">
+          <div class="bar-label-row"><span>Stable</span><span id="analysisScoreLabel">—</span><span>Collapsing</span></div>
+          <div class="bar-track" style="height:12px"><div class="bar-fill" id="analysisFill" style="height:12px"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Action Plan</div>
+        <div class="action-list" id="actionList"></div>
+      </div>
+    </div>
+
+  </div><!-- workspace -->
+</div><!-- main -->
+</div><!-- app -->
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box">
+    <div class="popup-header">
+      <div class="popup-title" id="popupTitle">Chart</div>
+      <button class="popup-close" id="popupClose">✕</button>
+    </div>
+    <div class="popup-chart-wrap"><canvas id="popupChart"></canvas></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="ecoModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Structural Violation</div>
+    <div class="modal-body"><strong>COGS cannot be equal to or greater than AOV.</strong> Your unit economics are negative before a single ad runs. No strategy can fix a broken margin — fix the product economics first.</div>
+    <button class="modal-btn" onclick="document.getElementById('ecoModal').classList.remove('open')">Got it</button>
+  </div>
+</div>
+
+<script>
+let chartInstances={};
+let activeEngine='dashboard';
+let lastInputs=null;
+
+// THEME
+const html=document.documentElement;
+let isDark=true;
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  isDark=!isDark;
+  html.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('themeToggle').textContent=isDark?'☀️  Toggle Light Mode':'🌙  Toggle Dark Mode';
+});
+
+// NAV
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>activateEngine(item.dataset.engine));
+});
+
+function activateEngine(name){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`[data-engine="${name}"]`).classList.add('active');
+  document.querySelectorAll('.engine').forEach(e=>e.classList.remove('active'));
+  document.getElementById('engine-'+name).classList.add('active');
+  activeEngine=name;
+  const titles={dashboard:'Dashboard',matrix:'Scenario Matrix',collapse:'Collapse Probability',surface:'Risk Surface',scale:'Scale Ceiling',sensitivity:'Sensitivity Map',graphs:'Graphs',analysis:'Structural Analysis'};
+  document.getElementById('topbarTitle').textContent=titles[name]||name;
+  if(lastInputs && name!=='dashboard') runEngine(name,lastInputs);
+  else if(lastInputs && name==='dashboard') runDashboard(lastInputs);
+}
+
+// RUN BUTTON
+document.getElementById('runBtn').addEventListener('click',()=>{
+  const inputs=getInputs();
+  if(!inputs) return;
+  lastInputs=inputs;
+  if(activeEngine==='dashboard') runDashboard(inputs);
+  else runEngine(activeEngine,inputs);
+});
+
+function getInputs(){
+  const aov=parseFloat(document.getElementById('aov').value);
+  const cvr=parseFloat(document.getElementById('cvr').value);
+  const cogs=parseFloat(document.getElementById('cogs').value);
+  const cpc=parseFloat(document.getElementById('cpc').value);
+  if(isNaN(aov)||isNaN(cvr)||isNaN(cogs)||isNaN(cpc)){
+    alert('Please fill in all 4 inputs.');return null;
+  }
+  if(cogs>=aov){document.getElementById('ecoModal').classList.add('open');return null;}
+  return{aov,cvr,cogs,cpc,net:aov-cogs,ev:(aov-cogs)*(cvr/100)};
+}
+
+function destroyChart(id){
+  if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}
+}
+
+function makeChart(id,config){
+  destroyChart(id);
+  const ctx=document.getElementById(id).getContext('2d');
+  chartInstances[id]=new Chart(ctx,config);
+  return chartInstances[id];
+}
+
+function getChartColors(){
+  return isDark?{grid:'rgba(255,255,255,0.05)',tick:'#6b7fa0'}:{grid:'rgba(0,0,0,0.06)',tick:'#7a8aaa'};
+}
+
+// DASHBOARD
+function runDashboard(d){
+  document.getElementById('dashEmpty').style.display='none';
+  document.getElementById('dashResults').style.display='block';
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  const profit=ev-cpc;
+  const headroom=((ev-cpc)/cpc)*100;
+  let losses=0;
+  [-10,-20,-30].forEach(cs=>{[10,20,30].forEach(ps=>{const p=net*(cvr*(1+cs/100)/100)-cpc*(1+ps/100);if(p<=0)losses++;});});
+  const collapsePct=Math.round((losses/9)*100);
+  let fragility=Math.max(0,Math.min(100,ev>0?100-((profit/ev)*100):100));
+
+  // ring
+  const circ=2*Math.PI*56;
+  const ring=document.getElementById('dashRing');
+  const color=fragility<35?'#00e5a0':fragility<65?'#ffb938':'#ff4560';
+  ring.style.stroke=color;
+  ring.style.strokeDasharray=circ;
+  ring.style.strokeDashoffset=circ;
+  setTimeout(()=>{ring.style.strokeDashoffset=circ-(fragility/100)*circ;},100);
+  const scoreEl=document.getElementById('dashScore');
+  scoreEl.style.color=color;
+  let cur=0;
+  const iv=setInterval(()=>{cur=Math.min(cur+Math.ceil(fragility/20),Math.round(fragility));scoreEl.textContent=cur;if(cur>=Math.round(fragility))clearInterval(iv);},40);
+
+  // verdict
+  const vEl=document.getElementById('dashVerdict');
+  let vClass,vText;
+  if(fragility<35){vClass='badge-green';vText='SYSTEM SAFE';}
+  else if(fragility<65){vClass='badge-yellow';vText='SYSTEM WARNING';}
+  else{vClass='badge-red';vText='COLLAPSE RISK';}
+  vEl.innerHTML=`<span class="badge ${vClass}"><span class="badge-dot" style="background:${color}"></span>${vText}</span>`;
+
+  // insight
+  const iEl=document.getElementById('dashInsight');
+  if(profit>0){
+    iEl.innerHTML=`Your system earns <strong>$${profit.toFixed(3)}</strong> per click. CPC can rise <strong>${Math.max(0,headroom).toFixed(0)}%</strong> before you hit break-even. Collapse risk across 9 scenarios: <strong>${collapsePct}%</strong>.`;
+  } else {
+    iEl.innerHTML=`Your system is <strong>losing $${Math.abs(profit).toFixed(3)}</strong> per click. CPC needs to drop to <strong>$${ev.toFixed(2)}</strong> to break even. Immediate action required.`;
+  }
+
+  // tags
+  const tags=document.getElementById('dashTags');
+  const tagData=[
+    {label:'Break-even: $'+ev.toFixed(2),cls:'badge-blue'},
+    {label:'Headroom: '+Math.max(0,headroom).toFixed(0)+'%',cls:headroom>30?'badge-green':headroom>10?'badge-yellow':'badge-red'},
+    {label:'Collapse: '+collapsePct+'%',cls:collapsePct<30?'badge-green':collapsePct<60?'badge-yellow':'badge-red'},
+  ];
+  tags.innerHTML=tagData.map(t=>`<span class="badge ${t.cls}">${t.label}</span>`).join('');
+
+  // metrics
+  document.getElementById('dashBe').textContent='$'+ev.toFixed(2);
+  const pEl=document.getElementById('dashProfit');
+  pEl.textContent=(profit>=0?'+$':'-$')+Math.abs(profit).toFixed(3);
+  pEl.className='stat-value '+(profit>0.1?'green':profit>0?'yellow':'red');
+  const hEl=document.getElementById('dashHeadroom');
+  hEl.textContent=Math.max(0,headroom).toFixed(0)+'%';
+  hEl.className='stat-value '+(headroom>30?'green':headroom>10?'yellow':'red');
+  const cEl=document.getElementById('dashCollapse');
+  cEl.textContent=collapsePct+'%';
+  cEl.className='stat-value '+(collapsePct<30?'green':collapsePct<60?'yellow':'red');
+}
+
+function runEngine(name,d){
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  if(name==='matrix') runMatrix(d);
+  if(name==='collapse') runCollapse(d);
+  if(name==='surface') runSurface(d);
+  if(name==='scale') runScale(d);
+  if(name==='sensitivity') runSensitivity(d);
+  if(name==='graphs') runGraphs(d);
+  if(name==='analysis') runAnalysis(d);
+}
+
+// MATRIX
+function runMatrix(d){
+  const{cvr,cpc,net}=d;
+  [-10,-20,-30].forEach((cs,r)=>{
+    [10,20,30].forEach((ps,c)=>{
+      const adjCvr=cvr*(1+cs/100);
+      const adjCpc=cpc*(1+ps/100);
+      const profit=net*(adjCvr/100)-adjCpc;
+      const el=document.getElementById(`c${r}${c}`);
+      const sign=profit>=0?'+$':'-$';
+      const val=Math.abs(profit).toFixed(3);
+      if(profit>0.05){
+        el.className='mcell mcell-safe';
+        el.innerHTML=`<span class="mcell-val">${sign}${val}</span><span class="mcell-lbl">SAFE</span>`;
+      } else if(profit>0){
+        el.className='mcell mcell-volatile';
+        el.innerHTML=`<span class="mcell-val">${sign}${val}</span><span class="mcell-lbl">VOLATILE</span>`;
+      } else {
+        el.className='mcell mcell-loss';
+        el.innerHTML=`<span class="mcell-val">${sign}${val}</span><span class="mcell-lbl">LOSS</span>`;
+      }
+    });
+  });
+}
+
+// COLLAPSE
+function runCollapse(d){
+  const{cvr,cpc,net,ev}=d;
+  let losses=0;
+  [-10,-20,-30].forEach(cs=>{[10,20,30].forEach(ps=>{const p=net*(cvr*(1+cs/100)/100)-cpc*(1+ps/100);if(p<=0)losses++;});});
+  const pct=Math.round((losses/9)*100);
+  document.getElementById('collapseCount').textContent=losses+' / 9';
+  const pEl=document.getElementById('collapsePct');
+  pEl.textContent=pct+'%';
+  pEl.className='stat-value '+(pct<30?'green':pct<60?'yellow':'red');
+  document.getElementById('collapseBeV').textContent='$'+ev.toFixed(2);
+  document.getElementById('collapseBarLabel').textContent=pct+'%';
+  const fill=document.getElementById('collapseFill');
+  fill.style.background=pct<30?'var(--green)':pct<60?'var(--yellow)':'var(--red)';
+  setTimeout(()=>{fill.style.width=pct+'%';},100);
+  let badgeCls,badgeText,riskLabel;
+  if(pct<20){badgeCls='badge-green';badgeText='LOW RISK';riskLabel='System is structurally robust';}
+  else if(pct<50){badgeCls='badge-yellow';badgeText='MODERATE RISK';riskLabel='Some vulnerability to market shifts';}
+  else if(pct<80){badgeCls='badge-red';badgeText='HIGH RISK';riskLabel='Major vulnerability — act now';}
+  else{badgeCls='badge-red';badgeText='EXTREME RISK';riskLabel='System is structurally broken';}
+  document.getElementById('collapseBadge').innerHTML=`<span class="badge ${badgeCls}">${badgeText}</span>`;
+  document.getElementById('collapseRiskLabel').textContent=riskLabel;
+
+  const labels=[],profits=[];
+  const maxC=ev*2.2;
+  for(let i=0;i<=50;i++){const t=(maxC/50)*i;labels.push('$'+t.toFixed(2));profits.push(parseFloat((ev-t).toFixed(4)));}
+  const c=getChartColors();
+  makeChart('collapseChart',{type:'line',data:{labels,datasets:[
+    {label:'Profit Zone',data:profits.map(p=>p>0?p:0),fill:true,backgroundColor:'rgba(0,229,160,0.08)',borderWidth:0,pointRadius:0},
+    {label:'Loss Zone',data:profits.map(p=>p<0?p:0),fill:true,backgroundColor:'rgba(255,69,96,0.08)',borderWidth:0,pointRadius:0},
+    {label:'Profit/Click',data:profits,borderColor:'#00e5a0',borderWidth:2.5,tension:.3,fill:false,pointRadius:0},
+    {label:'Your CPC',data:profits.map((_,i)=>i===Math.round((cpc/(maxC/50)))?0:null),borderColor:'#ffb938',borderWidth:0,pointRadius:6,pointBackgroundColor:'#ffb938'},
+  ]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:800},plugins:{legend:{labels:{color:c.tick,font:{size:11}}}},scales:{x:{ticks:{color:c.tick,font:{size:10},maxTicksLimit:8},grid:{color:c.grid}},y:{ticks:{color:c.tick,font:{size:10}},grid:{color:c.grid}}}}});
+}
+
+// SURFACE
+function runSurface(d){
+  const{cvr,cpc,net}=d;
+  const canvas=document.getElementById('riskCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const pad={l:50,b:40,t:20,r:20};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const rows=25,cols=25;
+  const cellW=cw/cols,cellH=ch/rows;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=isDark?'#0d1220':'#ffffff';
+  ctx.fillRect(0,0,W,H);
+  for(let y=0;y<rows;y++){
+    for(let x=0;x<cols;x++){
+      const cvrShift=-0.5+(y/rows)*0.5;
+      const cpcShift=(x/cols)*0.7;
+      const adjCvr=cvr*(1+cvrShift);
+      const adjCpc=cpc*(1+cpcShift);
+      const profit=net*(adjCvr/100)-adjCpc;
+      if(profit>0.5) ctx.fillStyle='rgba(0,165,114,0.75)';
+      else if(profit>0) ctx.fillStyle='rgba(201,128,0,0.75)';
+      else ctx.fillStyle='rgba(192,57,43,0.75)';
+      ctx.fillRect(pad.l+x*cellW,pad.t+y*cellH,cellW-1,cellH-1);
+    }
+  }
+  ctx.strokeStyle=isDark?'#1a2540':'#d4daea';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle=isDark?'#6b7fa0':'#7a8aaa';ctx.font='11px DM Sans';
+  for(let i=0;i<=5;i++){
+    ctx.fillText(Math.round(i*14)+'%',pad.l+(cw/5)*i-8,pad.t+ch+16);
+    ctx.fillText('-'+Math.round(i*10)+'%',4,pad.t+(ch/5)*i+4);
+  }
+}
+
+// SCALE
+function runScale(d){
+  const{cpc,net,cvr}=d;
+  const maxCpc=net*(cvr/100);
+  const headroom=((maxCpc-cpc)/cpc)*100;
+  const used=Math.min(100,Math.max(0,(cpc/maxCpc)*100));
+  document.getElementById('scaleCurrent').textContent='$'+cpc.toFixed(2);
+  document.getElementById('scaleMax').textContent='$'+maxCpc.toFixed(2);
+  const hEl=document.getElementById('scaleHeadroom');
+  hEl.textContent=(headroom>0?'+':'')+headroom.toFixed(0)+'%';
+  hEl.className='stat-value '+(headroom>50?'green':headroom>20?'yellow':'red');
+  document.getElementById('scaleUsedLabel').textContent=used.toFixed(0)+'% of ceiling used';
+  const fill=document.getElementById('scaleFill');
+  fill.style.background=used>80?'var(--red)':used>60?'var(--yellow)':'var(--green)';
+  setTimeout(()=>{fill.style.width=used+'%';},100);
+  const insight=document.getElementById('scaleInsight');
+  if(headroom>50) insight.textContent=`Your system has strong scaling room. You can increase CPC by up to $${(maxCpc-cpc).toFixed(2)} before hitting the ceiling. Scale confidently but monitor CVR closely.`;
+  else if(headroom>20) insight.textContent=`Moderate headroom. You can increase CPC by $${(maxCpc-cpc).toFixed(2)} — but any CVR drop would shrink this fast. Improve conversion rate before scaling aggressively.`;
+  else if(headroom>0) insight.textContent=`Thin headroom. Only $${(maxCpc-cpc).toFixed(2)} of room before collapse. Do not increase budgets. Focus on improving CVR or reducing COGS first.`;
+  else insight.textContent=`No headroom — CPC exceeds the ceiling. Your system is losing money on every click. Pause scaling immediately and reduce CPC below $${maxCpc.toFixed(2)}.`;
+}
+
+// SENSITIVITY
+function runSensitivity(d){
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  const base=ev-cpc;
+  const impacts={
+    CPC:{val:Math.abs(base-(ev-cpc*1.1)),color:'#ff4560',insight:'A 10% CPC rise has the most direct impact — every click costs more with no upside.'},
+    CVR:{val:Math.abs(base-(net*(cvr*0.9/100)-cpc)),color:'#ffb938',insight:'A 10% CVR drop means fewer conversions per click — revenue falls while spend stays constant.'},
+    COGS:{val:Math.abs(base-((aov-cogs*1.1)*(cvr/100)-cpc)),color:'#5b9ef5',insight:'A 10% COGS increase shrinks your net margin — less room to absorb ad costs.'},
+    AOV:{val:Math.abs(base-((aov*0.9-cogs)*(cvr/100)-cpc)),color:'#00e5a0',insight:'A 10% drop in AOV directly reduces expected value per click.'},
+  };
+  const max=Math.max(...Object.values(impacts).map(i=>i.val))||1;
+  const sorted=Object.entries(impacts).sort((a,b)=>b[1].val-a[1].val);
+  const list=document.getElementById('sensList');
+  list.innerHTML=sorted.map(([name,data],idx)=>{
+    const pct=((data.val/max)*100).toFixed(0);
+    const rank=idx===0?'Highest Impact':'';
+    return`<div class="sens-row">
+      <span class="sens-name">${name} Impact${rank?` <span style="font-size:9px;background:var(--red-bg);color:var(--red);padding:1px 6px;border-radius:10px;font-weight:700">${rank}</span>`:''}</span>
+      <div class="sens-track bar-track"><div class="sens-fill bar-fill" style="width:${pct}%;background:${data.color}"></div></div>
+      <span class="sens-pct" style="color:${data.color}">${pct}%</span>
+      <span class="sens-insight">${data.insight}</span>
+    </div>`;
+  }).join('');
+}
+
+// GRAPHS
+function runGraphs(d){
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  const labels=[],profits=[],frags=[];
+  for(let i=0;i<=40;i++){const t=(ev*2.2/40)*i;labels.push('$'+t.toFixed(2));profits.push(parseFloat((ev-t).toFixed(4)));frags.push(parseFloat(Math.max(0,Math.min(100,100-((ev-t)/ev*100))).toFixed(2)));}
+  const mini={responsive:true,maintainAspectRatio:false,animation:{duration:600},plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}};
+  makeChart('gProfit',{type:'line',data:{labels,datasets:[{data:profits,borderColor:'#00e5a0',borderWidth:2,fill:true,backgroundColor:'rgba(0,229,160,0.08)',tension:.3,pointRadius:0}]},options:mini});
+  makeChart('gBreakeven',{type:'line',data:{labels,datasets:[{data:profits,borderColor:'#5b9ef5',borderWidth:2,tension:.3,pointRadius:0,fill:false},{data:Array(labels.length).fill(0),borderColor:'#ff4560',borderDash:[4,4],borderWidth:1.5}]},options:mini});
+  makeChart('gFragility',{type:'line',data:{labels,datasets:[{data:frags,borderColor:'#ffb938',borderWidth:2,fill:true,backgroundColor:'rgba(255,185,56,0.08)',tension:.3,pointRadius:0}]},options:mini});
+  makeChart('gPie',{type:'doughnut',data:{labels:['CPC','COGS','Net Margin'],datasets:[{data:[cpc,cogs,Math.max(0,aov-cogs-cpc)],backgroundColor:['#ffb938','#ff4560','#00e5a0'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}});
+}
+
+// POPUP
+document.getElementById('popupClose').addEventListener('click',()=>{
+  document.getElementById('popupOverlay').classList.remove('open');
+  destroyChart('popupChart');
+});
+
+function openPopup(type){
+  if(!lastInputs){alert('Run the engine first.');return;}
+  const titles={profit:'Profit Collapse Curve',breakeven:'Break-Even Boundary',fragility:'Structural Fragility Curve',pie:'Cost Breakdown'};
+  document.getElementById('popupTitle').textContent=titles[type];
+  document.getElementById('popupOverlay').classList.add('open');
+  setTimeout(()=>buildPopupChart(type,lastInputs),50);
+}
+
+function buildPopupChart(type,d){
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  const labels=[],profits=[],frags=[];
+  for(let i=0;i<=50;i++){const t=(ev*2.2/50)*i;labels.push('$'+t.toFixed(2));profits.push(parseFloat((ev-t).toFixed(4)));frags.push(parseFloat(Math.max(0,Math.min(100,100-((ev-t)/ev*100))).toFixed(2)));}
+  destroyChart('popupChart');
+  const ctx=document.getElementById('popupChart').getContext('2d');
+  const c=getChartColors();
+  const bigOpts={responsive:true,maintainAspectRatio:false,animation:{duration:900},plugins:{legend:{labels:{color:c.tick,font:{size:12}}}},scales:{x:{ticks:{color:c.tick,font:{size:11},maxTicksLimit:10},grid:{color:c.grid}},y:{ticks:{color:c.tick,font:{size:11}},grid:{color:c.grid}}}};
+  if(type==='profit') chartInstances['popupChart']=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Profit Zone',data:profits.map(p=>p>0?p:0),fill:true,backgroundColor:'rgba(0,229,160,0.1)',borderWidth:0,pointRadius:0},{label:'Loss Zone',data:profits.map(p=>p<0?p:0),fill:true,backgroundColor:'rgba(255,69,96,0.1)',borderWidth:0,pointRadius:0},{label:'Profit/Click',data:profits,borderColor:'#00e5a0',borderWidth:3,tension:.3,fill:false,pointRadius:0}]},options:bigOpts});
+  if(type==='breakeven') chartInstances['popupChart']=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Profit/Click',data:profits,borderColor:'#5b9ef5',borderWidth:3,tension:.3,fill:false,pointRadius:0},{label:'Break-Even',data:Array(labels.length).fill(0),borderColor:'#ff4560',borderDash:[6,6],borderWidth:2}]},options:bigOpts});
+  if(type==='fragility') chartInstances['popupChart']=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Fragility Score',data:frags,borderColor:'#ffb938',borderWidth:3,tension:.3,fill:true,backgroundColor:'rgba(255,185,56,0.1)',pointRadius:0}]},options:bigOpts});
+  if(type==='pie') chartInstances['popupChart']=new Chart(ctx,{type:'doughnut',data:{labels:['CPC','COGS','Net Margin'],datasets:[{data:[cpc,cogs,Math.max(0,aov-cogs-cpc)],backgroundColor:['#ffb938','#ff4560','#00e5a0'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{labels:{color:c.tick,font:{size:13}}}}}});
+}
+
+// ANALYSIS
+function runAnalysis(d){
+  const{aov,cvr,cogs,cpc,net,ev}=d;
+  const profit=ev-cpc;
+  const fragility=Math.max(0,Math.min(100,ev>0?100-((profit/ev)*100):100));
+  document.getElementById('analysisScoreLabel').textContent=Math.round(fragility)+' / 100';
+  const fill=document.getElementById('analysisFill');
+  fill.style.background=fragility<35?'var(--green)':fragility<65?'var(--yellow)':'var(--red)';
+  setTimeout(()=>{fill.style.width=fragility+'%';},100);
+  const diag=document.getElementById('analysisDiag');
+  diag.style.display='block';
+  const actionList=document.getElementById('actionList');
+  let actions=[];
+  if(profit>0.5){
+    diag.className='diagnosis-box diagnosis-stable';
+    diag.innerHTML='<div class="diagnosis-label">Structural Diagnosis</div><div class="diagnosis-status" style="color:var(--green)">Structure Stable ✓</div>';
+    actions=[
+      {text:'Monitor CVR daily — it is your most sensitive variable. A 15% drop could flip you negative.',priority:'HIGH'},
+      {text:'Before increasing ad spend, verify your CPC headroom. Check the Scale Ceiling engine.',priority:'MEDIUM'},
+      {text:'Run a sensitivity analysis monthly to catch structural drift before it becomes expensive.',priority:'MEDIUM'},
+      {text:'Consider A/B testing landing pages to push CVR higher — this expands your headroom significantly.',priority:'LOW'},
+    ];
+  } else if(profit>0){
+    diag.className='diagnosis-box diagnosis-fragile';
+    diag.innerHTML='<div class="diagnosis-label">Structural Diagnosis</div><div class="diagnosis-status" style="color:var(--yellow)">Structure Fragile ⚠</div>';
+    actions=[
+      {text:'Do not scale spend until headroom improves. Any CPC increase will push you into loss territory.',priority:'CRITICAL'},
+      {text:'Improve conversion rate first. Even +0.5% CVR could give you meaningful headroom.',priority:'HIGH'},
+      {text:'Audit your COGS — negotiate with suppliers or bundle products to raise net margin.',priority:'HIGH'},
+      {text:'Test AOV upsells (order bumps, bundles) to raise break-even CPC without needing CVR changes.',priority:'MEDIUM'},
+    ];
+  } else {
+    diag.className='diagnosis-box diagnosis-collapsing';
+    diag.innerHTML='<div class="diagnosis-label">Structural Diagnosis</div><div class="diagnosis-status" style="color:var(--red)">Structure Collapsing ✗</div>';
+    actions=[
+      {text:'Pause all ad scaling immediately. You are losing money on every click.',priority:'CRITICAL'},
+      {text:`Reduce CPC below $${ev.toFixed(2)} — your current break-even threshold. Adjust bids now.`,priority:'CRITICAL'},
+      {text:'Fix conversion rate before anything else. The system cannot profit at current CPC with current CVR.',priority:'CRITICAL'},
+      {text:'Conduct a margin audit — if COGS is high, renegotiate before relaunching campaigns.',priority:'HIGH'},
+      {text:'Re-run this analysis after each change to verify structural improvement.',priority:'MEDIUM'},
+    ];
+  }
+  const priorityColors={CRITICAL:'var(--red)',HIGH:'var(--yellow)',MEDIUM:'var(--blue)',LOW:'var(--green)'};
+  actionList.innerHTML=actions.map(a=>`<div class="action-item"><div class="action-dot"></div><div><div>${a.text}</div><div class="action-priority" style="color:${priorityColors[a.priority]}">${a.priority} PRIORITY</div></div></div>`).join('');
+}
+
+// SHARE
+function getShareText(){
+  const aov=document.getElementById('aov').value||'?';
+  const cvr=document.getElementById('cvr').value||'?';
+  return`Just ran a full structural risk analysis on my ad system with Axovera Pro. AOV: $${aov} | CVR: ${cvr}% — check your collapse risk at axovera.com`;
+}
+function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');}
+function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
+</script>
+</body>
+</html>
