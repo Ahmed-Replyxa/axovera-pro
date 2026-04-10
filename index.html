@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -562,9 +563,222 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
   pointer-events:none;z-index:0;
 }
 .workspace{position:relative;z-index:1}
+
+/* LICENSE GATE */
+.gate{
+  position:fixed;inset:0;
+  background:#04050a;
+  display:flex;align-items:center;justify-content:center;
+  z-index:9000;
+  padding:20px;
+}
+
+.gate-box{
+  width:100%;max-width:440px;
+  background:#0d1220;
+  border:1px solid #1f2e4a;
+  border-radius:20px;
+  padding:40px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.gate-logo{
+  font-family:'Syne',sans-serif;
+  font-size:20px;font-weight:800;
+  letter-spacing:3px;color:#fff;
+  margin-bottom:6px;
+}
+
+.gate-pro-badge{
+  display:inline-block;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  background:rgba(91,110,245,0.15);color:#a5b4fc;
+  border:1px solid rgba(91,110,245,0.3);
+  padding:2px 8px;border-radius:4px;
+  margin-left:8px;vertical-align:middle;
+  font-family:'DM Sans',sans-serif;
+}
+
+.gate-title{
+  font-family:'Syne',sans-serif;
+  font-size:22px;font-weight:800;
+  color:#fff;margin:24px 0 8px;
+}
+
+.gate-desc{
+  font-size:14px;color:#8a9bbf;
+  line-height:1.7;margin-bottom:28px;
+}
+
+.gate-input-wrap{
+  position:relative;margin-bottom:12px;
+}
+
+.gate-input{
+  width:100%;
+  background:#060910;
+  border:1px solid #1f2e4a;
+  color:#fff;
+  padding:14px 48px 14px 16px;
+  border-radius:10px;
+  font-size:15px;font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;
+  text-align:center;
+  letter-spacing:1px;
+}
+
+.gate-input:focus{
+  outline:none;
+  border-color:#5b6ef5;
+  box-shadow:0 0 0 3px rgba(91,110,245,0.12);
+}
+
+.gate-input::placeholder{
+  color:#4a5568;letter-spacing:0;
+}
+
+.gate-btn{
+  width:100%;
+  background:linear-gradient(135deg,#5b6ef5,#7c3aed);
+  color:#fff;border:none;
+  padding:14px;border-radius:10px;
+  font-size:15px;font-weight:700;
+  cursor:pointer;font-family:'Syne',sans-serif;
+  letter-spacing:.5px;transition:all .25s;
+  margin-bottom:16px;
+}
+
+.gate-btn:hover{opacity:.9;transform:translateY(-1px)}
+.gate-btn:active{transform:translateY(0)}
+
+.gate-error{
+  font-size:13px;color:#ff4560;
+  background:rgba(255,69,96,0.08);
+  border:1px solid rgba(255,69,96,0.2);
+  padding:10px 14px;border-radius:8px;
+  margin-bottom:12px;display:none;
+  font-weight:500;
+}
+
+.gate-error.visible{display:block}
+
+.gate-success{
+  font-size:13px;color:#00e5a0;
+  background:rgba(0,229,160,0.08);
+  border:1px solid rgba(0,229,160,0.2);
+  padding:10px 14px;border-radius:8px;
+  margin-bottom:12px;display:none;
+  font-weight:500;
+}
+
+.gate-success.visible{display:block}
+
+.gate-footer{
+  font-size:12px;color:#4a5568;
+  line-height:1.7;
+}
+
+.gate-footer a{
+  color:#6b7fa0;text-decoration:none;
+  border-bottom:1px solid #1a2540;
+}
+
+.gate-footer a:hover{color:#5b6ef5}
+
+.gate-divider{
+  border:none;border-top:1px solid #1a2540;
+  margin:24px 0;
+}
+
+.gate-icon{
+  width:56px;height:56px;
+  background:rgba(91,110,245,0.1);
+  border:1px solid rgba(91,110,245,0.2);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-size:24px;
+}
+
+.gate-features{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin-bottom:24px;text-align:left;
+}
+
+.gate-feature{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;color:#8a9bbf;
+  font-weight:500;
+}
+
+.gate-feature-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:#5b6ef5;flex-shrink:0;
+}
+
+.gate-loading{
+  display:inline-block;
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+
+
+<!-- LICENSE GATE -->
+<div class="gate" id="licenseGate">
+  <div class="gate-box">
+    <div class="gate-logo">AXOVERA <span class="gate-pro-badge">PRO</span></div>
+    
+    <div class="gate-icon">🔬</div>
+    <div class="gate-title">Enter Your License Key</div>
+    <div class="gate-desc">
+      You're one step away from the full structural risk suite. Enter the license key from your purchase email.
+    </div>
+
+    <div class="gate-features">
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Scenario Matrix</div>
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Risk Surface Heatmap</div>
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Collapse Probability</div>
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Scale Ceiling Engine</div>
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Sensitivity Map</div>
+      <div class="gate-feature"><span class="gate-feature-dot"></span>Structural Analysis</div>
+    </div>
+
+    <div class="gate-error" id="gateError">Invalid license key. Please check your purchase email and try again.</div>
+    <div class="gate-success" id="gateSuccess">✓ License verified! Loading your dashboard...</div>
+
+    <div class="gate-input-wrap">
+      <input 
+        class="gate-input" 
+        id="licenseInput" 
+        type="text" 
+        placeholder="AXOV-XXXX-XXXX-XXXX"
+        maxlength="19"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+
+    <button class="gate-btn" id="unlockBtn">Unlock Pro Access →</button>
+
+    <hr class="gate-divider">
+
+    <div class="gate-footer">
+      Don't have a license? <a href="https://axovera.com" target="_blank">Get Axovera Pro — $29</a><br>
+      <span style="margin-top:6px;display:block">Need help? Check your spam folder or <a href="mailto:support@axovera.com">contact support</a></span>
+    </div>
+  </div>
+</div>
 
 <!-- SPLASH -->
 <div class="splash" id="splash">
@@ -1374,6 +1588,92 @@ function getShareText(){
 }
 function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');}
 function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
+
+
+// LICENSE GATE
+const VALID_KEYS = [
+  'AXOV-DEMO-TEST-0001',
+  'AXOV-DEMO-TEST-0002',
+  'AXOV-DEMO-TEST-0003',
+];
+
+const STORAGE_KEY = 'axovera_license';
+
+function formatKeyInput(val) {
+  const clean = val.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  const parts = [];
+  for (let i = 0; i < clean.length && i < 16; i += 4) {
+    parts.push(clean.slice(i, i + 4));
+  }
+  return parts.join('-');
+}
+
+function validateKey(key) {
+  const k = key.toUpperCase().trim();
+  return VALID_KEYS.includes(k);
+}
+
+function unlockApp() {
+  document.getElementById('licenseGate').style.display = 'none';
+}
+
+function checkStoredLicense() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored && validateKey(stored)) {
+    unlockApp();
+    return true;
+  }
+  return false;
+}
+
+// Auto-format input
+document.getElementById('licenseInput').addEventListener('input', function() {
+  const pos = this.selectionStart;
+  const formatted = formatKeyInput(this.value);
+  this.value = formatted;
+  document.getElementById('gateError').classList.remove('visible');
+});
+
+// Enter key support
+document.getElementById('licenseInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+});
+
+// Unlock button
+document.getElementById('unlockBtn').addEventListener('click', function() {
+  const key = document.getElementById('licenseInput').value.trim();
+  const errorEl = document.getElementById('gateError');
+  const successEl = document.getElementById('gateSuccess');
+  const btn = this;
+
+  if (!key) {
+    errorEl.textContent = 'Please enter your license key.';
+    errorEl.classList.add('visible');
+    return;
+  }
+
+  // Loading state
+  btn.innerHTML = '<span class="gate-loading"></span>Verifying...';
+  btn.disabled = true;
+  errorEl.classList.remove('visible');
+
+  setTimeout(() => {
+    if (validateKey(key)) {
+      localStorage.setItem(STORAGE_KEY, key);
+      successEl.classList.add('visible');
+      setTimeout(() => unlockApp(), 1200);
+    } else {
+      errorEl.textContent = 'Invalid license key. Please check your purchase email and try again.';
+      errorEl.classList.add('visible');
+      btn.innerHTML = 'Unlock Pro Access →';
+      btn.disabled = false;
+    }
+  }, 900);
+});
+
+// Check on load
+checkStoredLicense();
+
 </script>
 </body>
 </html>
