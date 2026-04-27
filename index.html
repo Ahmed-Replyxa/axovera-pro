@@ -72,7 +72,7 @@ body{
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
-  font-size:14px;
+  font-size:16px;
   overflow:hidden;
   transition:background .3s,color .3s;
 }
@@ -88,10 +88,12 @@ body{
 }
 .splash-logo{
   font-family:'Syne',sans-serif;
-  font-size:48px;font-weight:800;
-  letter-spacing:8px;color:#fff;
+  font-size:clamp(28px,10vw,48px);font-weight:800;
+  letter-spacing:clamp(3px,2vw,8px);color:#fff;
   animation:splashIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
   opacity:0;
+  padding:0 16px;
+  text-align:center;
 }
 .splash-pro{
   display:inline-block;
@@ -186,7 +188,7 @@ body{
 .nav-item{
   display:flex;align-items:center;gap:10px;
   padding:9px 20px;cursor:pointer;
-  color:var(--muted2);font-size:13px;font-weight:500;
+  color:var(--muted2);font-size:15px;font-weight:500;
   border-left:2px solid transparent;
   transition:all .15s;position:relative;
 }
@@ -219,7 +221,7 @@ body{
 .share-btn{
   display:flex;align-items:center;gap:8px;
   background:var(--card);border:1px solid var(--border);
-  color:var(--muted2);font-size:12px;font-weight:500;
+  color:var(--muted2);font-size:14px;font-weight:500;
   padding:7px 10px;border-radius:7px;cursor:pointer;
   font-family:'DM Sans',sans-serif;transition:all .2s;
   width:100%;
@@ -229,7 +231,7 @@ body{
 .theme-btn{
   display:flex;align-items:center;gap:8px;
   background:var(--card);border:1px solid var(--border);
-  color:var(--muted2);font-size:12px;font-weight:500;
+  color:var(--muted2);font-size:14px;font-weight:500;
   padding:7px 10px;border-radius:7px;cursor:pointer;
   font-family:'DM Sans',sans-serif;transition:all .2s;
   width:100%;
@@ -318,7 +320,7 @@ body{
   font-size:20px;font-weight:800;
   color:var(--text);margin-bottom:6px;
 }
-.engine-desc{font-size:13px;color:var(--muted2);line-height:1.6}
+.engine-desc{font-size:15px;color:var(--muted2);line-height:1.6}
 
 /* CARDS */
 .card{
@@ -328,7 +330,7 @@ body{
 }
 
 .card-title{
-  font-size:11px;font-weight:700;letter-spacing:1px;
+  font-size:13px;font-weight:700;letter-spacing:1px;
   color:var(--muted2);text-transform:uppercase;
   margin-bottom:14px;
 }
@@ -342,8 +344,8 @@ body{
   background:var(--surface);border:1px solid var(--border);
   border-radius:10px;padding:16px;
 }
-.stat-label{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted2);text-transform:uppercase;margin-bottom:6px}
-.stat-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.stat-label{font-size:13px;font-weight:600;letter-spacing:.5px;color:var(--muted2);text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--text)}
 .stat-value.green{color:var(--green)}
 .stat-value.yellow{color:var(--yellow)}
 .stat-value.red{color:var(--red)}
@@ -439,7 +441,7 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
   display:flex;align-items:flex-start;gap:10px;
   padding:12px 14px;
   background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;font-size:13px;color:var(--text2);line-height:1.5;
+  border-radius:8px;font-size:15px;color:var(--text2);line-height:1.5;
 }
 .action-dot{
   width:6px;height:6px;border-radius:50%;
@@ -751,6 +753,57 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
 }
 .sidebar-overlay.open{display:block}
 
+
+/* CLOSE BUTTON IN SIDEBAR */
+.sidebar-close{
+  display:none;
+  position:absolute;top:16px;right:16px;
+  background:none;border:1px solid var(--border);
+  color:var(--muted2);width:28px;height:28px;
+  border-radius:6px;cursor:pointer;
+  align-items:center;justify-content:center;
+  font-size:14px;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--sidebar-bg);
+  border-top:1px solid var(--border);
+  z-index:100;
+  padding:6px 0 8px;
+}
+.bottom-nav-items{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+.bottom-nav-item{
+  display:flex;flex-direction:column;align-items:center;
+  gap:3px;cursor:pointer;
+  color:var(--muted2);font-size:9px;font-weight:600;
+  letter-spacing:.3px;text-transform:uppercase;
+  padding:4px 8px;border-radius:8px;
+  transition:color .15s;flex:1;
+}
+.bottom-nav-item.active{color:var(--accent)}
+.bottom-nav-item svg{width:18px;height:18px;flex-shrink:0}
+
+/* COMPANY NAME */
+.sidebar-company{
+  font-size:11px;color:var(--muted);
+  text-align:center;font-weight:500;
+  letter-spacing:.5px;margin-top:4px;
+}
+
+@media(max-width:768px){
+  .sidebar-close{display:flex}
+  .sidebar{position:relative}
+  .bottom-nav{display:block}
+  .workspace{padding-bottom:80px}
+}
+
 @media(max-width:768px){
   .hamburger{display:flex}
 
@@ -867,7 +920,8 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="sidebar-header">
+  <div class="sidebar-header" style="position:relative">
+    <button class="sidebar-close" id="sidebarClose">✕</button>
     <div class="brand">AXOVERA <span class="brand-pro">PRO</span></div>
     <div class="sidebar-user">
       <div class="user-avatar" id="userAvatar">AX</div>
@@ -927,7 +981,10 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
     <div class="sidebar-share-label">Share</div>
     <button class="share-btn" onclick="shareTwitter()">↗ Twitter / X</button>
     <button class="share-btn" onclick="shareTelegram()">↗ Telegram</button>
+    <button class="share-btn" onclick="shareWhatsApp()">↗ WhatsApp</button>
+    <button class="share-btn" onclick="shareLinkedIn()">↗ LinkedIn</button>
     <button class="theme-btn" id="themeToggle">☀️ &nbsp;Toggle Light Mode</button>
+    <div class="sidebar-company">ArwaLite LLC</div>
   </div>
 </div>
 
@@ -1265,6 +1322,32 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
   </div><!-- workspace -->
 </div><!-- main -->
 </div><!-- app -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-items">
+    <div class="bottom-nav-item active" data-engine="dashboard" onclick="activateEngine('dashboard');updateBottomNav('dashboard')">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="3" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="9" width="14" height="6" rx="1.5" fill="currentColor" opacity=".4"/></svg>
+      Dash
+    </div>
+    <div class="bottom-nav-item" data-engine="matrix" onclick="activateEngine('matrix');updateBottomNav('matrix')">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="4" height="4" rx="1" fill="currentColor"/><rect x="6" y="1" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="1" width="4" height="4" rx="1" fill="currentColor" opacity=".3"/><rect x="1" y="6" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="6" y="6" width="4" height="4" rx="1" fill="currentColor"/><rect x="11" y="6" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="11" width="4" height="4" rx="1" fill="currentColor" opacity=".3"/><rect x="6" y="11" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="11" width="4" height="4" rx="1" fill="currentColor"/></svg>
+      Matrix
+    </div>
+    <div class="bottom-nav-item" data-engine="collapse" onclick="activateEngine('collapse');updateBottomNav('collapse')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M2 14L6 6L9 10L11 7L14 14H2Z" fill="currentColor" opacity=".3"/><path d="M2 14L6 6L9 10L11 7L14 14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
+      Collapse
+    </div>
+    <div class="bottom-nav-item" data-engine="sensitivity" onclick="activateEngine('sensitivity');updateBottomNav('sensitivity')">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="9" height="2" rx="1" fill="currentColor"/><rect x="1" y="7.5" width="13" height="2" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="11" width="6" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>
+      Sensitivity
+    </div>
+    <div class="bottom-nav-item" data-engine="analysis" onclick="activateEngine('analysis');updateBottomNav('analysis')">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5V8.5L10 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Analysis
+    </div>
+  </div>
+</div>
 
 <!-- POPUP -->
 <div class="popup-overlay" id="popupOverlay">
@@ -1665,6 +1748,8 @@ function getShareText(){
 }
 function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');}
 function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
+function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(getShareText()),'_blank');}
+function shareLinkedIn(){window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://axovera.com','_blank');}
 
 
 // EMAIL GATE — Paddle Subscription Verification
@@ -1763,6 +1848,35 @@ document.getElementById('unlockBtn').addEventListener('click', async function() 
 
 // Check on load
 checkStoredEmail();
+
+
+// BOTTOM NAV SYNC
+function updateBottomNav(name) {
+  document.querySelectorAll('.bottom-nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.engine === name);
+  });
+}
+
+// SIDEBAR CLOSE BUTTON
+const sidebarCloseBtn = document.getElementById('sidebarClose');
+if(sidebarCloseBtn) {
+  sidebarCloseBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('open');
+  });
+}
+
+// BACK BUTTON — go to dashboard instead of leaving
+let lastEngine = 'dashboard';
+const originalActivateEngine = activateEngine;
+window.addEventListener('popstate', function(e) {
+  if(activeEngine !== 'dashboard') {
+    activateEngine('dashboard');
+    updateBottomNav('dashboard');
+    history.pushState(null, '', window.location.href);
+  }
+});
+history.pushState(null, '', window.location.href);
 
 // HAMBURGER MENU
 const hamburgerBtn = document.getElementById('hamburgerBtn');
