@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -734,15 +735,15 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
 <body>
 
 
-<!-- LICENSE GATE -->
+<!-- EMAIL GATE -->
 <div class="gate" id="licenseGate">
   <div class="gate-box">
     <div class="gate-logo">AXOVERA <span class="gate-pro-badge">PRO</span></div>
     
     <div class="gate-icon">🔬</div>
-    <div class="gate-title">Enter Your License Key</div>
+    <div class="gate-title">Enter Your Email</div>
     <div class="gate-desc">
-      You're one step away from the full structural risk suite. Enter the license key from your purchase email.
+      Enter the email address you used to purchase Axovera Pro. We'll verify your subscription instantly.
     </div>
 
     <div class="gate-features">
@@ -754,28 +755,28 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
       <div class="gate-feature"><span class="gate-feature-dot"></span>Structural Analysis</div>
     </div>
 
-    <div class="gate-error" id="gateError">Invalid license key. Please check your purchase email and try again.</div>
-    <div class="gate-success" id="gateSuccess">✓ License verified! Loading your dashboard...</div>
+    <div class="gate-error" id="gateError">No active subscription found for this email. Please check your email or subscribe below.</div>
+    <div class="gate-success" id="gateSuccess">✓ Subscription verified! Loading your dashboard...</div>
 
     <div class="gate-input-wrap">
       <input 
         class="gate-input" 
-        id="licenseInput" 
-        type="text" 
-        placeholder="AXOV-XXXX-XXXX-XXXX"
-        maxlength="19"
-        autocomplete="off"
+        id="emailInput" 
+        type="email" 
+        placeholder="your@email.com"
+        autocomplete="email"
         spellcheck="false"
+        style="letter-spacing:0;text-align:left"
       >
     </div>
 
-    <button class="gate-btn" id="unlockBtn">Unlock Pro Access →</button>
+    <button class="gate-btn" id="unlockBtn">Access Pro Dashboard →</button>
 
     <hr class="gate-divider">
 
     <div class="gate-footer">
-      Don't have a license? <a href="https://axovera.com" target="_blank">Get Axovera Pro — $29</a><br>
-      <span style="margin-top:6px;display:block">Need help? Check your spam folder or <a href="mailto:support@axovera.com">contact support</a></span>
+      Don't have a subscription? <a href="https://axovera.com" target="_blank">Get Axovera Pro — $19/year</a><br>
+      <span style="margin-top:6px;display:block">Need help? <a href="mailto:support@axovera.com">Contact support</a></span>
     </div>
   </div>
 </div>
@@ -794,10 +795,10 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
   <div class="sidebar-header">
     <div class="brand">AXOVERA <span class="brand-pro">PRO</span></div>
     <div class="sidebar-user">
-      <div class="user-avatar">AX</div>
+      <div class="user-avatar" id="userAvatar">AX</div>
       <div class="user-info">
-        <div class="user-name">Pro Account</div>
-        <div class="user-plan">Full Access</div>
+        <div class="user-name" id="userName">Pro Account</div>
+        <div class="user-plan">Active · $19/year</div>
       </div>
     </div>
   </div>
@@ -1590,64 +1591,66 @@ function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+enc
 function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
 
 
-// LICENSE GATE
-const VALID_KEYS = [
-  'AXOV-DEMO-TEST-0001',
-  'AXOV-DEMO-TEST-0002',
-  'AXOV-DEMO-TEST-0003',
-];
+// EMAIL GATE — Paddle Subscription Verification
+const STORAGE_KEY = 'axovera_verified_email';
 
-const STORAGE_KEY = 'axovera_license';
-
-function formatKeyInput(val) {
-  const clean = val.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-  const parts = [];
-  for (let i = 0; i < clean.length && i < 16; i += 4) {
-    parts.push(clean.slice(i, i + 4));
-  }
-  return parts.join('-');
-}
-
-function validateKey(key) {
-  const k = key.toUpperCase().trim();
-  return VALID_KEYS.includes(k);
-}
 
 function unlockApp() {
   document.getElementById('licenseGate').style.display = 'none';
+  // Show email in sidebar
+  const email = localStorage.getItem(STORAGE_KEY) || '';
+  if (email) {
+    document.getElementById('userName').textContent = email;
+    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
+  }
 }
 
-function checkStoredLicense() {
+async function verifyEmail(email) {
+  try {
+    const response = await fetch(
+      'https://gboeqbnwweyqmluczpef.supabase.co/functions/v1/verify-subscription',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      }
+    );
+    const data = await response.json();
+    return data.valid === true;
+  } catch (err) {
+    console.error('Verification error:', err);
+    return false;
+  }
+}
+
+function checkStoredEmail() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && validateKey(stored)) {
+  if (stored) {
     unlockApp();
     return true;
   }
   return false;
 }
 
-// Auto-format input
-document.getElementById('licenseInput').addEventListener('input', function() {
-  const pos = this.selectionStart;
-  const formatted = formatKeyInput(this.value);
-  this.value = formatted;
-  document.getElementById('gateError').classList.remove('visible');
-});
-
 // Enter key support
-document.getElementById('licenseInput').addEventListener('keydown', function(e) {
+document.getElementById('emailInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('unlockBtn').click();
 });
 
+// Clear error on input
+document.getElementById('emailInput').addEventListener('input', function() {
+  document.getElementById('gateError').classList.remove('visible');
+});
+
 // Unlock button
-document.getElementById('unlockBtn').addEventListener('click', function() {
-  const key = document.getElementById('licenseInput').value.trim();
+document.getElementById('unlockBtn').addEventListener('click', async function() {
+  const email = document.getElementById('emailInput').value.trim().toLowerCase();
   const errorEl = document.getElementById('gateError');
   const successEl = document.getElementById('gateSuccess');
   const btn = this;
 
-  if (!key) {
-    errorEl.textContent = 'Please enter your license key.';
+  if (!email || !email.includes('@')) {
+    errorEl.textContent = 'Please enter a valid email address.';
     errorEl.classList.add('visible');
     return;
   }
@@ -1657,22 +1660,22 @@ document.getElementById('unlockBtn').addEventListener('click', function() {
   btn.disabled = true;
   errorEl.classList.remove('visible');
 
-  setTimeout(() => {
-    if (validateKey(key)) {
-      localStorage.setItem(STORAGE_KEY, key);
-      successEl.classList.add('visible');
-      setTimeout(() => unlockApp(), 1200);
-    } else {
-      errorEl.textContent = 'Invalid license key. Please check your purchase email and try again.';
-      errorEl.classList.add('visible');
-      btn.innerHTML = 'Unlock Pro Access →';
-      btn.disabled = false;
-    }
-  }, 900);
+  const isValid = await verifyEmail(email);
+
+  if (isValid) {
+    localStorage.setItem(STORAGE_KEY, email);
+    successEl.classList.add('visible');
+    setTimeout(() => unlockApp(), 1200);
+  } else {
+    errorEl.textContent = 'No active subscription found for this email. Please check your email or subscribe below.';
+    errorEl.classList.add('visible');
+    btn.innerHTML = 'Access Pro Dashboard →';
+    btn.disabled = false;
+  }
 });
 
 // Check on load
-checkStoredLicense();
+checkStoredEmail();
 
 </script>
 </body>
