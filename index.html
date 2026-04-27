@@ -1611,7 +1611,10 @@ async function verifyEmail(email) {
       'https://gboeqbnwweyqmluczpef.supabase.co/functions/v1/verify-subscription',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer sb_publishable_1tbTa98snjD9hVERhlMtTA_u_HEwiea'
+        },
         body: JSON.stringify({ email })
       }
     );
