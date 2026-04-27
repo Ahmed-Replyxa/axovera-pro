@@ -1627,11 +1627,22 @@ async function verifyEmail(email) {
 }
 
 function checkStoredEmail() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlEmail = urlParams.get('email');
+  
+  if (urlEmail) {
+    document.getElementById('emailInput').value = urlEmail;
+    localStorage.setItem(STORAGE_KEY, urlEmail);
+    unlockApp();
+    return true;
+  }
+  
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
     unlockApp();
     return true;
   }
+  
   return false;
 }
 
