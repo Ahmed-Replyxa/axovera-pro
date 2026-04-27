@@ -4,11 +4,6 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Axovera Pro — Structural Risk Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -735,12 +730,87 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
 }
 
 @keyframes spin{to{transform:rotate(360deg)}}
+/* ===== MOBILE RESPONSIVE ===== */
+
+/* HAMBURGER BUTTON */
+.hamburger{
+  display:none;
+  background:none;border:1px solid var(--border);
+  color:var(--text);width:36px;height:36px;
+  border-radius:8px;cursor:pointer;
+  align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);
+  z-index:200;
+}
+.sidebar-overlay.open{display:block}
+
+@media(max-width:768px){
+  .hamburger{display:flex}
+
+  .sidebar{
+    position:fixed;left:-260px;top:0;bottom:0;
+    z-index:300;width:240px;
+    transition:left .3s ease;
+  }
+  .sidebar.open{left:0}
+
+  body{overflow:auto}
+  .app{height:auto;min-height:100vh}
+  .main{width:100%;overflow:auto;height:auto}
+  .workspace{overflow:visible;flex:none;padding:14px}
+
+  .topbar{padding:0 12px;gap:8px}
+  .topbar-title{font-size:13px}
+  .run-btn{padding:7px 12px;font-size:12px}
+
+  .input-strip{
+    flex-wrap:wrap;
+    padding:10px 12px;
+    gap:8px;
+  }
+  .input-group{
+    flex:0 0 calc(50% - 4px);
+    min-width:0;
+  }
+  .input-group label{font-size:9px}
+  .input-group input{font-size:13px;padding:8px 10px}
+
+  .stats-4{grid-template-columns:1fr 1fr}
+  .stats-3{grid-template-columns:1fr 1fr}
+
+  .fragility-ring-wrap{flex-direction:column;align-items:flex-start;gap:16px}
+
+  .welcome-grid{grid-template-columns:1fr 1fr}
+
+  .graphs-grid{grid-template-columns:1fr}
+
+  .sens-row{grid-template-columns:80px 1fr 45px;grid-template-rows:auto auto}
+  .sens-insight{grid-column:1/-1;font-size:11px}
+
+  .engine-title{font-size:17px}
+
+  .dash-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:400px){
+  .welcome-grid{grid-template-columns:1fr}
+  .stats-4{grid-template-columns:1fr}
+  .input-group{flex:0 0 100%}
+}
+
 </style>
 </head>
 <body>
 
 
-<!-- EMAIL GATE -->
+<!-- LICENSE GATE -->
 <div class="gate" id="licenseGate">
   <div class="gate-box">
     <div class="gate-logo">AXOVERA <span class="gate-pro-badge">PRO</span></div>
@@ -866,6 +936,7 @@ table.matrix .row-lbl{font-size:11px;font-weight:600;color:var(--muted2);text-al
 
   <!-- TOPBAR -->
   <div class="topbar">
+    <button class="hamburger" id="hamburgerBtn">☰</button>
     <div class="topbar-title" id="topbarTitle">Dashboard</div>
     <div class="topbar-right">
       <button class="run-btn" id="runBtn">Run Engine →</button>
@@ -1599,10 +1670,8 @@ function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera
 // EMAIL GATE — Paddle Subscription Verification
 const STORAGE_KEY = 'axovera_verified_email';
 
-
 function unlockApp() {
   document.getElementById('licenseGate').style.display = 'none';
-  // Show email in sidebar
   const email = localStorage.getItem(STORAGE_KEY) || '';
   if (email) {
     document.getElementById('userName').textContent = email;
@@ -1674,7 +1743,6 @@ document.getElementById('unlockBtn').addEventListener('click', async function() 
     return;
   }
 
-  // Loading state
   btn.innerHTML = '<span class="gate-loading"></span>Verifying...';
   btn.disabled = true;
   errorEl.classList.remove('visible');
